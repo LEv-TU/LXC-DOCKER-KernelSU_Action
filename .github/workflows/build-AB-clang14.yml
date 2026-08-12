@@ -1,40 +1,4 @@
-name: 高端机 谷歌clang14
-on:
-  workflow_dispatch:
-
-jobs:
-  build:
-    name: 
-    runs-on: ubuntu-latest
-    if: github.event.repository.owner.id == github.event.sender.id
-    
-    steps:
-    - uses: actions/upload-artifact@v4
-    
-    - name: 环境变量配置
-      run: |
-        cat config.env | grep KERNEL_SOURCE= >> $GITHUB_ENV
-        cat config.env | grep KERNEL_SOURCE_BRANCH= >> $GITHUB_ENV
-        cat config.env | grep KERNEL_CONFIG= >> $GITHUB_ENV
-        cat config.env | grep KERNEL_ZIP_NAME= >> $GITHUB_ENV
-        cat config.env | grep LLVM_CONFIG= >> $GITHUB_ENV
-        cat config.env | grep KERNEL_IMAGE_NAME= >> $GITHUB_ENV
-        cat config.env | grep NEED_DTBO= >> $GITHUB_ENV
-        cat config.env | grep SWITCH_PYTHON= >> $GITHUB_ENV
-        cat config.env | grep ENABLE_KVM= >> $GITHUB_ENV
-        cat config.env | grep ENABLE_LXC_DOCKER= >> $GITHUB_ENV
-        cat config.env | grep ENABLE_KERNELSU= >> $GITHUB_ENV
-        cat config.env | grep KERNELSU_TAG= >> $GITHUB_ENV
-
-    - name: 构建编译内核环境
-      run: |
-        sudo apt-get update
-        sudo -E apt-get -y -qq install git make bc bison ccache openssl zip kmod cpio flex libelf-dev curl libssl-dev libtfm-dev wget device-tree-compiler ca-certificates python3 python2 binutils binutils-aarch64-linux-gnu binutils-arm-linux-gnueabi
-        mkdir -p $GITHUB_WORKSPACE/kernel_workspace
-
-    - name: 切换python2.7
-      if: env.SWITCH_PYTHON == 'true'
-      run: |
+KERNEL_SOURCE_BRANCH=lineage-23.2      run: |
        sudo rm -f /usr/bin/python
        sudo ln -s /usr/bin/python2.7 /usr/bin/python
           
