@@ -52,12 +52,51 @@ jobs:
     - name: 开启lxc和docker配置
       if: env.ENABLE_LXC_DOCKER == 'true'
       run: |
-        cd $GITHUB_WORKSPACE/kernel_workspace
-        wget https://github.com/fate-think/LXC-DOCKER-KernelSU_Action/releases/download/1.0.0/add-lxc-docker-custom.sh
-        chmod 755 add-lxc-docker-custom.sh
-        ./add-lxc-docker-custom.sh android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
-        echo "# CONFIG_ANDROID_PARANOID_NETWORK is not set" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
-
+         cd $GITHUB_WORKSPACE/kernel_workspace
+         echo "CONFIG_NAMESPACES=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_PID_NS=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_IPC_NS=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_USER_NS=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_UTS_NS=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_NET_NS=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_CGROUPS=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_CGROUP_DEVICE=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_CGROUP_PIDS=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_MEMCG=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_CGROUP_SCHED=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_FAIR_GROUP_SCHED=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_CGROUP_FREEZER=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_CGROUP_NET_PRIO=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_CPUSETS=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_OVERLAY_FS=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_FUSE_FS=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_DEVTMPFS=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_TMPFS_POSIX_ACL=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_TMPFS_XATTR=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_VETH=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_BRIDGE=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_NETFILTER=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_BRIDGE_NETFILTER=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_NETFILTER_ADVANCED=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_NF_CONNTRACK=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_IP_NF_IPTABLES=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_IP_NF_FILTER=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_IP_NF_NAT=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_NF_NAT=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_IP_NF_TARGET_MASQUERADE=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_NETFILTER_XT_TARGET_MASQUERADE=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_NETFILTER_XT_TARGET_TCPMSS=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_NF_CONNTRACK_NETLINK=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_NF_NAT_REDIRECT=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_IP_ADVANCED_ROUTER=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_IP_MULTIPLE_TABLES=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_BPF=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_BPF_SYSCALL=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_SECCOMP=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "CONFIG_SECCOMP_FILTER=y" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+         echo "# CONFIG_ANDROID_PARANOID_NETWORK is not set" >> android-kernel/arch/arm64/configs/${{ env.KERNEL_CONFIG }}
+    
     - name: 添加runc补丁
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
