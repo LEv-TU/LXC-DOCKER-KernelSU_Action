@@ -48,40 +48,27 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
         git clone ${{ env.KERNEL_SOURCE }} -b ${{ env.KERNEL_SOURCE_BRANCH }} android-kernel --depth=1
-
+    
     - name: 通用内核错误修复
       run: |
-        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-        echo ">>> 开始智能修复 4.14 内核常见错误..."
-        echo ">>> 修复 css->cgroup->id 错误..."
-        find . -type f -name "*.c" -exec grep -l "css->cgroup->id" {} \; | while read file; do
-        echo "  修复 $file"
-        sed -i 's/css->cgroup->id/css->id/g' "$file"
-        echo ">>> 修复 timeconst.h 生成问题..."
-        if [ -f kernel/time/timeconst.bc ]; then
-        mkdir -p include/generated
-        echo "HZ 100" > include/generated/timeconst.h
-        echo "  timeconst.h 已生成"
-        else
-        echo "  timeconst.bc 不存在，跳过"
-        fi
-        echo ">>> 修复 BPF JIT 兼容性问题..."
-        DEFCONFIG_PATH="arch/arm64/configs/${{ env.KERNEL_CONFIG }}"
-        if [ -f "$DEFCONFIG_PATH" ]; then
-        sed -i 's/^CONFIG_BPF_JIT=y/# CONFIG_BPF_JIT is not set/g' "$DEFCONFIG_PATH"
-        sed -i 's/^CONFIG_BPF_JIT_ALWAYS_ON=y/# CONFIG_BPF_JIT_ALWAYS_ON is not set/g' "$DEFCONFIG_PATH"
-        echo "  BPF JIT 已禁用"
-        else
-        echo "  defconfig 不存在，跳过 BPF 修复"
-        fi
-        echo ">>> 修复 __has_attribute 兼容性..."
-        if [ -f include/linux/compiler_types.h ]; then
-        sed -i 's/#if __has_attribute(__fallthrough__)/#if 1/g' include/linux/compiler_types.h
-        echo "  compiler_types.h 已修复"
-        else
-        echo "  compiler_types.h 不存在，跳过"
-        fi
-        echo ">>> 修复完成"
+       cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+       echo ">>> Start kernel fix..."
+       find . -type f -name "*.c" -exec grep -l "css->cgroup->id" {} \; | while read -r file; do
+       sed -i 's/css->cgroup->id/css->id/g' "$file"
+       done
+       if [ -f kernel/time/timeconst.bc ]; then
+       mkdir -p include/generated
+       echo "HZ 100" > include/generated/timeconst.h
+       fi
+       DEFCONFIG_PATH="arch/arm64/configs/${{ env.KERNEL_CONFIG }}"
+       if [ -f "$DEFCONFIG_PATH" ]; then
+       sed -i 's/^CONFIG_BPF_JIT=y/# CONFIG_BPF_JIT is not set/g' "$DEFCONFIG_PATH"
+       sed -i 's/^CONFIG_BPF_JIT_ALWAYS_ON=y/# CONFIG_BPF_JIT_ALWAYS_ON is not set/g' "$DEFCONFIG_PATH"
+       fi
+       if [ -f include/linux/compiler_types.h ]; then
+       sed -i 's/#if __has_attribute(__fallthrough__)/#if 1/g' include/linux/compiler_types.h
+       fi
+       echo ">>> Fix done."
     
     - name: 开启lxc和docker配制
       if: env.ENABLE_LXC_DOCKER == 'true'
