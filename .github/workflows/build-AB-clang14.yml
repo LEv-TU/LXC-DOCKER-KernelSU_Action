@@ -145,12 +145,12 @@ jobs:
     - name: 开始编译内核
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-        echo ">>> 全局修复 css->cgroup->id 错误（所有 .c 和 .h 文件）..."
+        echo ">>> 修复编译错误..."
         find . -type f \( -name "*.c" -o -name "*.h" \) -exec sed -i 's/css->cgroup->id/css->id/g' {} \;
+        sed -i 's/bpf_jit_blinding_enabled/bpf_jit_kallsyms_enabled/g' kernel/bpf/verifier.c
         echo ">>> 修复完成，开始编译..."
         export PATH=$GITHUB_WORKSPACE/kernel_workspace/clang-aosp/clang-r450784d/bin:$PATH
-        make O=out ARCH=arm64 ${{ env.KERNEL_CONFIG }}
-        if [ "${{ env.LLVM_CONFIG }}" = "y" ]; then
+        make O=out ARCH=arm64 ${{ env.KERNEL_CONFIG }}        if [ "${{ env.LLVM_CONFIG }}" = "y" ]; then
         make -j$(nproc --all) CC="ccache clang" CXX=clang++ O=out ARCH=arm64 SUBARCH=arm64 CROSS_COMPILE="aarch64-linux-gnu-" CROSS_COMPILE_ARM32="arm-linux-gnueabi-" LLVM=1 LLVM_IAS=1
         else
         make -j$(nproc --all) CC="ccache clang" CXX=clang++ O=out ARCH=arm64 SUBARCH=arm64 CROSS_COMPILE="aarch64-linux-gnu-" CROSS_COMPILE_ARM32="arm-linux-gnueabi-"
