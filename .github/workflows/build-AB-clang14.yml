@@ -49,7 +49,7 @@ jobs:
         cd $GITHUB_WORKSPACE/kernel_workspace
         git clone ${{ env.KERNEL_SOURCE }} -b ${{ env.KERNEL_SOURCE_BRANCH }} android-kernel --depth=1
 
-     - name: 通用内核错误修复
+    - name: 通用内核错误修复
       run: |
        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
        echo ">>> 开始修复 4.14 内核常见错误..."
