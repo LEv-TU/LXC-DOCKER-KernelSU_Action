@@ -121,7 +121,12 @@ jobs:
     - name: 检查 cgroup.c
       run: |
          grep -n "struct cgroup" android-kernel/kernel/cgroup/cgroup.c | head -20
-    
+
+    - name: 修复 netprio_cgroup.c 中的 css->cgroup->id 错误
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+        sed -i 's/css->cgroup->id/css->id/g' net/core/netprio_cgroup.c
+   
     - name: 开始编译内核
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
