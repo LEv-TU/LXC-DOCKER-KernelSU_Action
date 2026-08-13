@@ -51,24 +51,18 @@ jobs:
     
     - name: 通用内核错误修复
       run: |
-       cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-       echo ">>> Start kernel fix..."
-       find . -type f -name "*.c" -exec grep -l "css->cgroup->id" {} \; | while read -r file; do
-       sed -i 's/css->cgroup->id/css->id/g' "$file"
-       done
-       if [ -f kernel/time/timeconst.bc ]; then
-       mkdir -p include/generated
-       echo "HZ 100" > include/generated/timeconst.h
-       fi
-       DEFCONFIG_PATH="arch/arm64/configs/${{ env.KERNEL_CONFIG }}"
-       if [ -f "$DEFCONFIG_PATH" ]; then
-       sed -i 's/^CONFIG_BPF_JIT=y/# CONFIG_BPF_JIT is not set/g' "$DEFCONFIG_PATH"
-       sed -i 's/^CONFIG_BPF_JIT_ALWAYS_ON=y/# CONFIG_BPF_JIT_ALWAYS_ON is not set/g' "$DEFCONFIG_PATH"
-       fi
-       if [ -f include/linux/compiler_types.h ]; then
-       sed -i 's/#if __has_attribute(__fallthrough__)/#if 1/g' include/linux/compiler_types.h
-       fi
-       echo ">>> Fix done."
+        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+        find . -type f -name "*.c" -exec grep -l "css->cgroup->id" {} \; | while read -r file; do
+        sed -i 's/css->cgroup->id/css->id/g' "$file"
+        done
+        DEFCONFIG_PATH="arch/arm64/configs/${{ env.KERNEL_CONFIG }}"
+        if [ -f "$DEFCONFIG_PATH" ]; then
+        sed -i 's/^CONFIG_BPF_JIT=y/# CONFIG_BPF_JIT is not set/g' "$DEFCONFIG_PATH"
+        sed -i 's/^CONFIG_BPF_JIT_ALWAYS_ON=y/# CONFIG_BPF_JIT_ALWAYS_ON is not set/g' "$DEFCONFIG_PATH"
+        fi
+        if [ -f include/linux/compiler_types.h ]; then
+        sed -i 's/#if __has_attribute(__fallthrough__)/#if 1/g' include/linux/compiler_types.h
+        fi
     
     - name: 开启lxc和docker配制
       if: env.ENABLE_LXC_DOCKER == 'true'
