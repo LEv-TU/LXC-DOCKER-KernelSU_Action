@@ -48,8 +48,21 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
         git clone ${{ env.KERNEL_SOURCE }} -b ${{ env.KERNEL_SOURCE_BRANCH }} android-kernel --depth=1
-                      
-    - name: 开启lxc和docker配置
+
+     - name: 通用内核错误修复
+      run: |
+       cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+       echo ">>> 开始修复 4.14 内核常见错误..."
+       echo "修复 css->cgroup->id 错误..."
+       find . -name "*.c" -exec sed -i 's/css->cgroup->id/css->id/g' {} \;
+       echo "修复 timeconst.h 生成问题..."
+       if [ -f kernel/time/timeconst.bc ]; then
+       echo "HZ 100" > include/generated/timeconst.h
+       fi
+       echo "添加 BPF 兼容性修复..."
+       sed -i 's/CONFIG_BPF_JIT=y/# CONFIG_BPF_JIT is not set/g' arch/arm64/configs/${{ env.KERNEL_CONFIG }} 2>/dev/null || true
+                   
+    - name: 开启lxc和docker配制
       if: env.ENABLE_LXC_DOCKER == 'true'
       run: |
          cd $GITHUB_WORKSPACE/kernel_workspace
